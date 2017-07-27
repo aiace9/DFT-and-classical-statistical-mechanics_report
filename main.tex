@@ -1,0 +1,438 @@
+\documentclass[12pt,notes=off,unicode]{beamer}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{tikz}
+\usepackage{siunitx}
+\usepackage{eurosym}
+\usepackage{braket}
+\usepackage{animate}
+
+\usepackage{listings}
+\usepackage{color}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}
+{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color
+  basicstyle=\tiny\ttfamily,        % size of fonts used for the code
+  language = Python,
+  breaklines=true,                 % automatic line breaking only at whitespace
+  captionpos=b,                    % sets the caption-position to bottom
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  stringstyle=\color{mymauve},     % string literal style
+  keywordstyle=\color{blue},       % keyword style
+  otherkeywords={True},
+  identifierstyle=\color{red},
+  %deleteidentifiers={StopIteration},
+  commentstyle=\color{mygray},    % comment style
+}
+
+\usetikzlibrary{decorations}
+\usetikzlibrary{er}
+
+\graphicspath{{./img/}}
+
+\usetheme{Frankfurt}
+\setbeamercovered{dynamic}
+
+\title{A report about DFT and classical statistical mechanics}
+\author[Ruggero]{Ruggero Lot}
+%\date[]{}
+
+\institute[UNITS]{Università degli studi di Trieste}
+\logo{\includegraphics[scale=.3]{img/logounits.pdf}}
+
+
+
+\setbeamertemplate{headline}
+{%
+  \leavevmode%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex]{section in head/foot}%
+    \hbox to .5\paperwidth{\hfil\insertsectionhead\hfil}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex]{section in head/foot}%
+    \hbox to .5\paperwidth{\hfil\insertframenumber/\inserttotalframenumber\hfil}
+  \end{beamercolorbox}%
+}
+
+
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{section in head/foot}%
+    \usebeamerfont{title like}\insertinstitute
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{section in head/foot}%
+    \usebeamerfont{title in head/foot}\insertsubsection
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}%
+    \usebeamerfont{date in head/foot}\insertauthor \hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{}
+
+\begin{document}
+
+  \begin{frame}[noframenumbering, plain, c]\frametitle{}
+    \maketitle
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Why should we investigate this topic?}
+      
+    Many physical phenomena are associated with strongly non uniform situations \footnote{i.e. situations for which the avg. number density exhibits spatial variation} and DFT is capable of a good description of this phenomena.
+  
+  \end{frame}
+
+  \note{a good example of this phenomena is the liquid vapor phase transition}
+  
+  \section{Review of the framework} % (fold)
+  \label{sec:review_of_the_framework}
+  \begin{frame}[c]\frametitle{Hamiltonian and Grand potential}
+    The hamiltonian is:
+    \begin{equation}
+      \begin{split}
+      H_N &= \sum_i^N \frac{\mathbf{p}_i^2}{2 m} + \Phi(\mathbf{r}_1\dots \mathbf{r}_n) + \sum_{i=1}^N V(\mathbf{r}_i)\\
+       &= K.E. + \Phi +V
+      \end{split}
+    \end{equation}
+    And the Grand potential is:
+    \begin{equation*}
+      \Omega(V, T, \mu,[V(\mathbf{r})]) 
+    \end{equation*}
+    by defining the useful quantity:
+    \begin{equation}
+      u(\mathbf{r})\equiv\mu - V(\mathbf{r})
+    \end{equation}
+    we can claim that:
+    \begin{equation}
+       \Omega(V, T, \mu,[V(\mathbf{r})]) \rightarrow \Omega(V, T, [u(\mathbf{r})])
+    \end{equation}
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{First set of correlation functions}
+    It is now possible to derive a first set of correlation functions.\\
+    one body density:
+      \begin{equation}
+        \rho(\mathbf{r})\equiv\rho^{(1)}{(\mathbf{r})}\equiv\left<\hat\rho(\mathbf{r})\right> = 
+        - \frac{\delta\Omega}{\delta u (\mathbf{r})}
+      \end{equation}
+    density-density correlation function:
+    \begin{equation}
+      \begin{split}
+      G(\mathbf{r}_1,\mathbf{r}_2)&=
+      \left<
+        \left(
+          \hat\rho\left(\mathbf{r}_1\right) - \rho\left(\mathbf{r}_1\right)
+        \right)
+        \left(
+          \hat\rho\left(\mathbf{r}_2\right) - \rho\left(\mathbf{r}_2\right)
+        \right)
+        \right> \\
+      &=-\beta^{-1}\frac{\delta^2\Omega}{\delta u (\mathbf{r}_1)\delta u (\mathbf{r}_2)}
+      \end{split}
+    \end{equation}
+    \only<2>{
+    which is linked to the usual 2 body distribution function via:
+    \begin{equation}
+      G(\mathbf{r}_1,\mathbf{r}_2) = \rho^{(2)}(\mathbf{r}_1,\mathbf{r}_2)-
+      \rho(\mathbf{r}_1)\rho(\mathbf{r}_2) + \rho(\mathbf{r_1})\delta(\mathbf{r}_1- \mathbf{r}_2)
+    \end{equation}
+    }
+    \only<3->{and so on.....}
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{H-K-M theorem}
+      
+  We can move our description from $u(\mathbf{r})$ to $\rho(\mathbf{r})$:
+  \only<1>{
+  \begin{theorem}
+    for a given $\Phi$, $\mu$, and $T$: $\rho(\mathbf{r}) \leftrightarrow V(\mathbf{r})$.\\
+    So a density is associated to one external potential and vice versa.
+  \end{theorem}
+  }
+  \begin{equation}
+    \begin{matrix}
+      & & & & \rightarrow & f_n \text{ is fixed} \\
+      \rho(\mathbf{r}) \text{is fixed} & \rightarrow & V(\mathbf{r}) & \rightarrow H & \\
+      & & & & \rightarrow & \Xi \text{ is fixed} 
+    \end{matrix}
+  \end{equation}
+  \only<2->{
+  where:
+  \begin{align}
+    f_n &= \Xi^{-1} e^{-\beta H_N - \mu N} \text{ probability density}\\
+    \Xi &= Tr_{cl} e^{H_N - \mu N} \text{ grand partition function} 
+  \end{align}
+  }
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{The \textbf{fundamental equation}}
+    Following the Mermin idea we introduce the functional:
+      \begin{equation}
+        \mathcal{F}[\rho] \equiv Tr_{cl}[f_n(K.E. + U + \beta^{-1} ln(f_n))]
+      \end{equation}
+    \only<1>{
+    applying a Legendre transform with respect to $\rho$:
+      \begin{equation*}
+        \Omega_v[\tilde{\rho}] = \mathcal{F}[\tilde{\rho}] - \int d \mathbf{r} u(\mathbf{r})\tilde{\rho}
+      \end{equation*}
+    it can be shown that on this quantity there is a variational principle and so:
+    \begin{columns}
+      \column{.5\textwidth}
+      \begin{equation*}
+        \left.\frac{\delta \Omega_v[\tilde{\rho}]}{\delta \tilde{\rho}(\mathbf{r})}\right\rvert_{\rho} = 0 
+      \end{equation*}
+      \column{.5\textwidth}
+      \begin{equation*}
+        \Omega_v[\rho]= \Omega
+      \end{equation*}
+    \end{columns}
+    combining these conditions with the previous equation we get the fundamental equation.
+    }
+    \only<2->{
+    combining these conditions with the previous equation we get the \textbf{fundamental equation}.
+      \begin{equation}
+        \mu = V(\mathbf{r}) + \frac{\delta \mathcal{F}[\rho]}{\delta\rho(\mathbf{r})}
+      \end{equation}
+    that describes the chemical potential in our liquid
+    \begin{equation}
+      \frac{\delta \mathcal{F}[\rho]}{\delta\rho(\mathbf{r})} \equiv \text{intrinsic chemical potential (non local)}
+    \end{equation}
+    }  
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Exchange quantity}
+  From the definition of $\mathcal{F}$ we can calculate the value for an ideal gas $\Phi = 0$ 
+  \begin{equation}
+    \mathcal{F}_{id}[\rho] = \beta^{-1} \int d \mathbf{r} \rho(\mathbf{r}) (ln(\Lambda^3 \rho(\mathbf{r})-1))
+  \end{equation}
+  and we can give a definition of the exchange functional
+  \begin{equation}
+    \mathcal{F}_{ex}[\rho] = \mathcal{F}[\rho] - \mathcal{F}_{id}[\rho]
+  \end{equation}
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Second set of correlation functions}
+    From this quantity it is possible to define a second set of correlation functionals
+    \begin{equation}
+      c^{(1)}= \frac{\delta \beta \mathcal{F}_{ex}[\rho]}{\delta \rho (\mathbf{r})}
+    \end{equation}
+    \begin{equation}
+      c^{(2)}= \frac{\delta^2 \beta \mathcal{F}_{ex}[\rho]}{\delta \rho (\mathbf{r}_1) \delta \rho (\mathbf{r}_2)}
+  \end{equation}
+  and so on ...
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Self consistent equation}
+  Now, using:
+
+  \begin{columns}
+    \column{.5\textwidth}
+    \begin{equation*}
+      c^{(1)}= \frac{\delta \beta \mathcal{F}_{ex}[\rho]}{\delta \rho (\mathbf{r})}
+    \end{equation*}
+    \column{.5\textwidth}
+    \begin{equation*}
+      \mu = V(\mathbf{r}) + \frac{\delta \mathcal{F}[\rho]}{\delta\rho(\mathbf{r})}
+    \end{equation*}
+  \end{columns}
+  
+  \begin{equation*}
+    \mathcal{F}_{id}[\rho] = \beta^{-1} \int d \mathbf{r} \rho(\mathbf{r})
+    (ln(\Lambda^3 \rho(\mathbf{r})-1))
+  \end{equation*}
+
+  we can write the self consistency equation:
+  \begin{equation}
+    \Lambda^3 \rho(\mathbf{r}) = exp \left[\beta u(\mathbf{r}) + c^{(1)}(\mathbf{r})\right]
+  \end{equation} 
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Comparison with QM DFT}
+  \begin{equation*}
+    \Lambda^3 \rho(\mathbf{r}) = exp \left[\beta u(\mathbf{r}) + c^{(1)}(\mathbf{r})\right]
+  \end{equation*} 
+    \begin{align*}
+      \mathcal{F}_{ex}[\rho] &\leftrightarrow \frac{1}{2} \int \int d \mathbf{r} d \mathbf{r'}\frac{n(\mathbf{r})n(\mathbf{r'})}{\mid \mathbf{r} - \mathbf{r'} \mid} + E_{xc}[n]\\
+      -\beta c^{(1)}(\mathbf{r'}) &\leftrightarrow \int d \mathbf{r} \frac{n(\mathbf{r'})}{\mid \mathbf{r} - \mathbf{r'} \mid} + \frac{\delta E_{xc}[n]}{\delta n}
+    \end{align*}
+  \end{frame}
+  % section review_of_the_framework (end)
+
+  \section{Towards LDA} % (fold)
+  \label{sec:towards_lda}
+  \begin{frame}[c]\frametitle{Approximation}
+    Up to here there were no approximations or restrictions on the problem. But this reflects on the fact that no one told us how to write $ c^{(1)}(\mathbf{r})$.\\
+
+    Now we are going to add them.
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Pairwise potential}
+      
+  \begin{equation}
+    \Phi(\mathbf{r}_1\dots \mathbf{r}_N)=\frac{1}{2}\sum_{i\ne j} \Phi(\mathbf{r}_i,\mathbf{r}_j)
+  \end{equation}
+    due to the fact that now $\Omega[\Phi]$ we can derive it
+  % and since it holds that:
+  %\begin{equation}
+  %  \frac{1}{2} \rho^2(\mathbf{r}_1 \mathbf{r}_2) = 
+  %  \left<\hat{\rho}(\mathbf{r}_1)\hat{\rho}(\mathbf{r}_2)\right> - 
+  %  \left<\hat{\rho}(\mathbf{r}_1)\right> \delta(\mathbf{r}_1 - \mathbf{r}_2)
+  %\end{equation}
+  \begin{equation}
+    \frac{\delta \Omega}{\delta \Phi(\mathbf{r}_i,\mathbf{r}_j)} = \frac{1}{2} \rho^2(\mathbf{r}_1 \mathbf{r}_2) = \frac{\delta \Omega_v[\rho]}{\delta \Phi(\mathbf{r}_i,\mathbf{r}_j)}
+  \end{equation}
+  and using the definition of $\Omega_v$ we have that:
+  \begin{equation}
+    \frac{\delta \mathcal{F}[\rho]}{\delta \Phi(\mathbf{r}_i,\mathbf{r}_j)} = \frac{1}{2} \rho^2(\mathbf{r}_1 \mathbf{r}_2)
+  \end{equation}
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Pairwise potential}
+    Parameterizing with alpha a path in the potential space from a reference to the real one ($\Phi = \Phi_r + \alpha \Phi_p$) we can now integrate the last equation:
+    \begin{equation}
+      \mathcal{F}[\rho] = \mathcal{F}_r[\rho]+\frac{1}{2} \int_0^1 d \alpha \int d \mathbf{r}_1 \int d\mathbf{r}_2 \rho^2(\Phi_\alpha; \mathbf{r}_1, \mathbf{r}_2) \Phi_p(\mathbf{r}_1,\mathbf{r}_2)
+    \end{equation}
+    where $\mathcal{F}_r[\rho]$ is the intrinsic free energy of the reference fluid.\\
+    \smallskip
+    This equation is the starting point for all the perturbations theory.
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Some remark}
+      \begin{itemize}
+        \item $\mathcal{F}[\rho]$ is a functional that is unknown and that we have to built.
+        \item after $\mathcal{F}[\rho]$ has been built there is no reason to expect the resulting proprieties coming from it to be the exact solution of any hamiltonian.
+        \item DFT is no good to describe phase transition because $\mathcal{F}[\rho]$ usually has a mean field character
+      \end{itemize}
+  \end{frame} 
+  % section towards_lda (end)
+
+  \section{LDA} % (fold)
+  \label{sec:lda}
+  \begin{frame}[c]\frametitle{LDA}
+  If we are dealing with a perturbation potential we can expand our last result:
+  \begin{equation}
+    \mathcal{F}[\rho] = \mathcal{F}_r[\rho]+\frac{1}{2} \int d \mathbf{r}_1 \int d\mathbf{r}_2 \rho^2_r(\mathbf{r}_1, \mathbf{r}_2) \Phi_p(\mathbf{r}_1,\mathbf{r}_2)+ O(\Phi_p^2)
+  \end{equation}
+  were now we can plug our big approximation: the ``local density''
+  \begin{align*} 
+    \mathcal{F}_r[\rho] & \approx \int d \mathbf{r} f_{r0}(\rho(\mathbf{r})) \\
+     \rho^2_r(\mathbf{r}_1, \mathbf{r}_2) & \approx \rho(\mathbf{r}_1) \rho(\mathbf{r}_2) g_r(\bar{\rho}; r_{12})
+  \end{align*} 
+  where:
+  \begin{columns}
+    \column{.7\textwidth}
+    $f_{r0}(\rho(\mathbf{r}))$: fed of the reference fluid\\
+    $g_r(\bar{\rho}; r_{12})$: rdf of the reference fluid
+    \column{.3\textwidth}
+    e.g. $\bar{\rho}=\frac{\rho(\mathbf{r_1})+\rho(\mathbf{r_2})}{2}$
+  \end{columns}
+  \end{frame}
+  
+  \begin{frame}[c]\frametitle{How to chose the reference fluid}
+    \only<1>{
+    \begin{figure}[c]
+      \centering
+      \includegraphics[width=.9\textwidth]{graph/view1.eps}
+    \end{figure}
+    }
+    \only<2>{
+    \begin{equation*}
+      v(r)= 4\left[\left(\frac{\sigma}{r}\right)^{12}-\left(\frac{\sigma}{r}\right)^{6}\right]
+    \end{equation*}
+    \begin{columns}
+      \column{.5\textwidth}
+      Barker and Henderson
+      \begin{align*}
+      v_0(r)&= \begin{cases}
+              v(r) & r<\sigma \\
+              0 & r>\sigma 
+            \end{cases}\\
+      w(r)&= \begin{cases}
+              0 & r<\sigma\\ 
+              v(r) & r>\sigma
+            \end{cases}
+      \end{align*}
+      \column{.5\textwidth}
+      Weeks et al.
+      \begin{align*}
+      v_0(r)&= \begin{cases}
+              v(r) + \epsilon & r<r_m \\
+              0 & r>r_m 
+            \end{cases}\\
+      w(r)&= \begin{cases}
+              -\epsilon & r<r_m\\ 
+              v(r) & r>r_m
+            \end{cases}
+      \end{align*}
+    \end{columns}
+    }
+    \par\hfill \tiny $v_0(r)$ is the reference
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Example of results}
+  Surface tension of Argon near the triple point\footnote{$\sigma=$\SI{3.40}{\angstrom}, $\frac{\epsilon}{k_b}=$\SI{119.8}{\kelvin}}
+    \begin{table}[c]
+      \centering
+      \begin{tabular}{c|l|cc}
+      \hline
+
+      \hline
+      \multicolumn{2}{c|}{Theory}  & T(K) & $\gamma$(dyn cm\^-1) \\
+      \hline
+        &Experimental result & 85 & 13.1 \\
+        &Experimental result & 90 & 11.9 \\
+        BH &Toxvaerd, S. 1971 & 90 & 14 \\
+        BH &Lee, J.K. 1974 & 84 & 16 \\
+        BH &Abraham, F.F. 1975 & 90 & 17 \\
+        WCA &Abraham, F.F. 1975 & 90 & 17 \\
+        WCA &Upstill, C.E. 1977 & 85 & 14 \\
+        WCA &Singh, Y. 1977 & 84 & 18 \\
+      \hline
+      
+      \hline
+      \end{tabular}
+    \end{table}
+  \end{frame}
+
+  \begin{frame}[c]\frametitle{Conclusions}
+    \begin{itemize}
+      \item we saw how to get to a Self Consistency equation
+      \item we explored a perturbation approach to define $\mathcal{F}[\rho]$
+      \item we applied an LDA to this result and show some result
+    \end{itemize}
+    \pause
+    possible future?
+    \begin{itemize}
+      \item investigate different approaches for $\mathcal{F}[\rho]$
+      \item use them in non local theory
+    \end{itemize}
+  
+  \end{frame}
+  \begin{frame}[c]\frametitle{Conclusions}
+  Main sources that have been used for this work:
+  \begin{itemize}
+    \item The nature of the liquid-vapor interface and other topics by R.Evans 1978
+    \item Fundamentals of Inhomogeneous Fluids by Douglas Henderson 1992
+    \item Theory of simple liquids by J.P. Hansen and I.R. McDonald 1976  
+    \item Statistical Mechanical Theories of Freezing by M.Baus 1987
+  \end{itemize}
+  \begin{center}
+    Thank you for your attention
+  \end{center}
+  \end{frame}
+  % section lda (end)
+
+\end{document}
